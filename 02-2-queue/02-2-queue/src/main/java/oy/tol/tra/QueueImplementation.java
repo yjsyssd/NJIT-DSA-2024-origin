@@ -1,52 +1,75 @@
 package oy.tol.tra;
 
-import java.util.Arrays;
-
-public class QueueImplementation<SS> implements QueueInterface<SS> {
-
-    private static final int DEFAULT_CAPACITY = 10;
-    private int size;
+public class QueueImplementation<E> implements QueueInterface<E> {
+    private Object[] itemArray;
     private int capacity;
-    private SS[] elements;
+    private int size = 0;
+    private int head = 0;
+    private int tail = 0;
 
-    @SuppressWarnings("unchecked")
+    private static final int DEFAULT_QUEUE_SIZE = 10;
+
+    public QueueImplementation() throws QueueAllocationException {
+        capacity = DEFAULT_QUEUE_SIZE;
+        itemArray = new Object[DEFAULT_QUEUE_SIZE];
+    }
     public QueueImplementation(int capacity) {
-        this.capacity = capacity > 0 ? capacity : DEFAULT_CAPACITY;
-        this.elements = (SS[]) new Object[this.capacity];
+        this.capacity = capacity;
+        this.itemArray = (E[]) new Object[capacity];
+        this.head = 0;
+        this.tail = 0;
         this.size = 0;
     }
 
-    public QueueImplementation() {
-        this(DEFAULT_CAPACITY);
+
+    @Override
+    public int capacity() {
+        return capacity;
     }
 
     @Override
-    public void enqueue(SS element) {
+    public void enqueue(E element) throws QueueAllocationException, NullPointerException {
         if (element == null) {
-            throw new NullPointerException("Can not add null element to the queue");
+            throw new NullPointerException("Cannot enqueue null element.");
         }
         if (size == capacity) {
-            reallocate();
+            try {
+                int newCapacity = 2 * capacity;
+                Object[] newArray = new Object[newCapacity];
+                for (int i = 0; i < size; i++) {
+                    newArray[i] = itemArray[(head + i) % capacity];
+                }
+                itemArray = newArray;
+                head = 0;
+                tail = size;
+                capacity = newCapacity;
+            } catch (OutOfMemoryError e) {
+                throw new QueueAllocationException("Cannot allocate more room for the queue.");
+            }
         }
-        elements[size++] = element;
+        itemArray[tail] = element;
+        tail = (tail + 1) % capacity;
+        size++;
     }
 
     @Override
-    public SS dequeue() {
+    public E dequeue() throws QueueIsEmptyException {
         if (isEmpty()) {
-            throw new QueueIsEmptyException("Queue is empty can not dequeue");
+            throw new QueueIsEmptyException("Queue is empty");
         }
-        SS element = elements[0];
-        System.arraycopy(elements, 1, elements, 0, --size);
+        E element = (E) itemArray[head];
+        itemArray[head] = null;
+        head = (head + 1) % capacity;
+        size--;
         return element;
     }
 
     @Override
-    public SS element() {
-        if (isEmpty()) {
-            throw new QueueIsEmptyException("Queue is empty can not retrieve element");
+    public E element() throws QueueIsEmptyException {
+        if (size == 0) {
+            throw new QueueIsEmptyException("Queue is empty.");
         }
-        return elements[0];
+        return (E) itemArray[head];
     }
 
     @Override
@@ -61,33 +84,28 @@ public class QueueImplementation<SS> implements QueueInterface<SS> {
 
     @Override
     public void clear() {
-        Arrays.fill(elements, null);
-        size = 0;
+        for (int i = 0; i < capacity; i++) {
+            itemArray[i] = null;
+        }
+        this.head = 0;
+        this.tail = 0;
+        this.size = 0;
     }
 
     @Override
-    public int capacity() {
-        return capacity;
-    }
-
-    @SuppressWarnings("unchecked")
-    private void reallocate() {
-        capacity *= 2;
-        SS[] newArray = (SS[]) new Object[capacity];
-        System.arraycopy(elements, 0, newArray, 0, size);
-        elements = newArray;
-    }@Override
     public String toString() {
-        StringBuilder sb = new StringBuilder("[");
+        if (size == 0) {
+            return "[]";
+        }
+        StringBuilder builder = new StringBuilder();
+        builder.append("[");
         for (int i = 0; i < size; i++) {
-            sb.append(elements[i]);
+            builder.append(itemArray[(head + i) % capacity].toString());
             if (i < size - 1) {
-                sb.append(", ");
+                builder.append(", ");
             }
         }
-        sb.append("]");
-        return sb.toString();
+        builder.append("]");
+        return builder.toString();
     }
-
 }
-
