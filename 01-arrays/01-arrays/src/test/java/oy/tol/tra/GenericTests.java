@@ -2,7 +2,6 @@ package oy.tol.tra;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -18,7 +17,7 @@ import org.junit.jupiter.api.Timeout;
 public class GenericTests {
 
     @Test
-    @Timeout(value = 10,threadMode = Timeout.ThreadMode.SEPARATE_THREAD)
+    @Timeout(value = 10, threadMode = Timeout.ThreadMode.SEPARATE_THREAD)
     @DisplayName("Testing the Generic reverse() with integers")
     void reverseTestInteger() {
         Integer [] testArray = getArrayWithNumbers();

@@ -1,7 +1,6 @@
 package oy.tol.tra;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Timeout.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -15,10 +14,10 @@ import org.junit.jupiter.api.Timeout;
 
 @DisplayName("Testing the IntArray, second tests.")
 public class SecondTests {
-   
+
    @Test
    @Timeout(value = 10, threadMode = Timeout.ThreadMode.SEPARATE_THREAD)
-   @DisplayName("Testing the IntArray.reverse()") 
+   @DisplayName("Testing the IntArray.reverse()")
    void reverseTest() {
       Integer [] testArray = getArrayWithNumbers();
 
@@ -26,7 +25,7 @@ public class SecondTests {
       Collections.reverse(list);
       Integer [] expectedReversedArray = new Integer [list.size()];
       list.toArray(expectedReversedArray);
-      
+
       Grades toTest = new Grades(testArray);
       toTest.reverse();
       System.out.format("==> Reverse test array has %d elements%n", testArray.length);
@@ -41,7 +40,7 @@ public class SecondTests {
    @DisplayName("Testing the IntArray.sort()")
    void sortTest() {
       Integer [] testArray = getArrayWithNumbers();
-      
+
       List<Integer> list = new ArrayList<Integer>(Arrays.asList(testArray));
       Collections.sort(list);
       Integer [] correctlySorteddArray = new Integer [list.size()];
