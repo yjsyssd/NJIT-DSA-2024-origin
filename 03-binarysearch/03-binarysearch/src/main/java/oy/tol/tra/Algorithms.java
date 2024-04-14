@@ -1,95 +1,76 @@
 package oy.tol.tra;
 
 public class Algorithms {
-
-    private Algorithms(){
-
+    public static <T> void reverse(T[] array) {
+        int i = 0;
+        int j = array.length - 1;
+        while (i < j) {
+            T temp = array[i];
+            array[i] = array[j];
+            array[j] = temp;
+            i++;
+            j--;
+        }
     }
 
-    public static int binarySearch(int target, Integer[] array, int from, int to) {
-
-        int Jin= from;
-        int Chu= to;
-
-        while (Jin <= Chu) {
-            int middle=(Chu+Jin)/2;
-            if (array[middle]== target) {
-                return middle;
-            } else if (array[middle]<target) {
-                Jin=middle+1;
-            }else {
-                Chu=middle-1;
+    //slow linear search
+    public static <T> int slowLinearSearch(T aValue, T[] fromArray, int fromIndex, int toIndex) {
+        for (int index = fromIndex; index < toIndex; index++) {
+            if (fromArray[index].equals(aValue)) {
+                return index;
             }
         }
         return -1;
     }
 
-
-    public static int binarySearch(String value, String[] array, int from, int to) {
-
-        int Jin1= from;
-        int Chu1= to;
-
-        while (Jin1 <= Chu1) {
-            int Zhong=(Chu1+Jin1)/2;
-            int cap=value.compareTo(array[Zhong]);
-
-            if (cap== 0) {
-                return Zhong;
-            } else if (cap<0) {
-                Chu1=Zhong+1;
-            }else {
-                Jin1=Zhong-1;
+    public static <T extends Comparable<T>> int binarySearch(T aValue, T[] fromArray, int fromIndex, int toIndex) {
+        while (fromIndex <= toIndex) {
+            int midIndex = fromIndex + (toIndex - fromIndex) / 2;
+            int compareResult = fromArray[midIndex].compareTo(aValue);
+            if (compareResult == 0) {
+                return midIndex;
+            } else if (compareResult < 0) {
+                fromIndex = midIndex + 1;
+            } else {
+                toIndex = midIndex - 1;
             }
         }
         return -1;
     }
 
+    public static <E extends Comparable<E>> void fastSort(E[] array) {
+        quickSort(array, 0, array.length - 1);
+    }
 
-    public static  void sort(Integer[] array) {
+    public static <E extends Comparable<E>> void quickSort(E[] array, int begin, int end) {
+        if (begin >= end) {
+            return;
+        }
+        int partitionIndex = partition(array, begin, end);
+        quickSort(array, begin, partitionIndex - 1);
+        quickSort(array, partitionIndex + 1, end);
+    }
 
-        int n = array.length;
+    private static <E extends Comparable<E>> int partition(E[] array, int begin, int end) {
 
-        for (int i=0;i<n-1;i++) {
-            for(int j=0;j<n-1-i;j++){
-                if (array[j]>array[j+1]){
-                    int number=array[j];
-                    array[j]=array[j+1];
-                    array[j+1]=number;
-                }
+        E pivot = array[end];
+        int leftPointer = begin;
+        int rightPointer = end;
+        while (leftPointer < rightPointer) {
+            while (leftPointer < rightPointer && array[leftPointer].compareTo(pivot) < 0) {
+                leftPointer++;
             }
-        }
-
-    }
-
-    public static void quickSort(String[] array,int start,int end){
-        if (start<end){
-            int Data1= partition(array,start,end);
-            quickSort(array,start,Data1-1);
-            quickSort(array,Data1+1,end);
-        }
-    }
-
-    public static void sort(String[] array){
-        quickSort(array,0,array.length-1);
-    }
-
-    public static int partition(String[] array,int start,int end){
-        String pivot =array[end];
-        int i=start-1;
-        for(int j=start; j<end; j++){
-            if (array[j].compareTo(pivot)<0){
-                i++;
-                String nonumber=array[i];
-                array[i]=array[j];
-                array[j]=nonumber;
+            while (leftPointer < rightPointer && array[rightPointer].compareTo(pivot) > 0) {
+                rightPointer--;
             }
+            swap(array, leftPointer, rightPointer);
         }
-        String tap=array[i+1];
-        array[i+1]=array[end];
-        array[end]=tap;
-        return i+1;
+        return leftPointer;
     }
 
-
+    private static <E> void swap(E[] array, int index1, int index2) {
+        E temp = array[index1];
+        array[index1] = array[index2];
+        array[index2] = temp;
+    }
 }
